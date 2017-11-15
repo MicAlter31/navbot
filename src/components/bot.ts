@@ -6,11 +6,16 @@ import {
 
 import { 
     initLuis,
-    extractCustomerEntity 
+    extractCustomerEntity,
+    extractSalesAmountPrefixAndPeriod,
+    noEntity
 } from './luis';
 
 import {
-    findCustomer
+    findCustomer,
+    findCreditLimit,
+    findCompanies,
+    findSalesAmountOfPeriod
 } from './navision';
 
 const settings: IChatConnectorSettings = {
@@ -32,6 +37,34 @@ bot.dialog("GetCustomerAddress", [
     matches: 'GetCustomerAddress'
 })
 
+bot.dialog("GetCreditLimit", [
+    // Waterfall Dialog  
+    extractCustomerEntity,
+    findCreditLimit
+  ])
+  .triggerAction({
+      matches: 'GetCreditLimit'
+  })
+  
+  bot.dialog("GetCompanies", [
+    // Waterfall Dialog
+    noEntity,
+    findCompanies
+  ])
+  .triggerAction({
+      matches: 'GetCompanies'
+  })
+  
+  bot.dialog("GetSalesAmountOfPeriod", [
+    // Waterfall Dialog
+    extractSalesAmountPrefixAndPeriod,
+    findSalesAmountOfPeriod
+  ])
+  .triggerAction({
+      matches: 'GetSalesAmountOfPeriod'
+  })
+  
+    
 
 bot.dialog("/", function(session) {
     session.send("Sorry, I don't understand your request")
